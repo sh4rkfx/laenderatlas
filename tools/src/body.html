@@ -1,0 +1,147 @@
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <svg viewBox="0 0 34 34" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6">
+        <circle cx="17" cy="17" r="14.5"></circle>
+        <ellipse cx="17" cy="17" rx="6.5" ry="14.5"></ellipse>
+        <path d="M2.5 17h29M5 9.5h24M5 24.5h24"></path>
+      </svg>
+      <h1>Länderatlas</h1>
+      <span class="tag">0.2</span>
+    </div>
+    <nav class="views" id="views" aria-label="Karten"></nav>
+    <button id="btn-settings" class="btn" type="button">Einstellungen</button>
+  </header>
+
+  <div id="demo-note" class="note" hidden>
+    <p><strong>Demo mit erfundenen Beispieldaten.</strong> Änderungen bleiben in diesem Browser. Die Version im GitHub-Repo speichert stattdessen in <code>data/johannes.json</code> und <code>data/elisabeth.json</code>.</p>
+  </div>
+
+  <div class="context">
+    <div class="ctx-main">
+      <span class="who" id="ctx-who">Länderatlas</span>
+      <span class="badge" id="ctx-badge" hidden></span>
+      <span class="ctx-meta" id="ctx-meta" role="status"></span>
+    </div>
+    <div class="ctx-actions">
+      <input id="linkbox" class="linkbox" type="text" readonly aria-label="Link zu dieser Karte" hidden>
+      <button id="btn-link" class="btn" type="button">Link kopieren</button>
+    </div>
+  </div>
+
+  <main class="layout">
+    <div class="atlas">
+      <figure class="plate" id="plate">
+        <div class="frame">
+          <svg id="map" role="img" aria-label="Weltkarte"></svg>
+          <div class="zoom">
+            <button type="button" id="z-in" aria-label="Hineinzoomen">+</button>
+            <button type="button" id="z-out" aria-label="Herauszoomen">−</button>
+            <button type="button" id="z-reset" aria-label="Ganze Welt zeigen">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4"></path></svg>
+            </button>
+          </div>
+          <div class="legend" id="legend" aria-hidden="true"></div>
+          <div id="tip" class="tip" hidden></div>
+          <div id="toast" class="toast" role="status" aria-live="polite"></div>
+        </div>
+        <figcaption>
+          <span id="map-hint">Ziehen verschiebt, <kbd>Strg</kbd> + Mausrad oder zwei Finger zoomen. Gebiete erscheinen als Rauten ab 2,5-facher Vergrößerung oder im Reiter „Gebiete“.</span>
+          <span class="mono">Natural-Earth-Projektion · Grenzen 1:50 Mio.</span>
+        </figcaption>
+      </figure>
+
+      <section class="stats" id="stats" aria-label="Statistik"></section>
+    </div>
+
+    <aside class="register" aria-labelledby="reg-h">
+      <h2 id="reg-h">Länder auswählen</h2>
+      <div class="tabs" role="tablist" aria-label="Liste">
+        <button type="button" role="tab" id="tab-c" data-tab="c" aria-selected="true">Länder<span>197</span></button>
+        <button type="button" role="tab" id="tab-t" data-tab="t" aria-selected="false">Gebiete<span>53</span></button>
+      </div>
+      <div class="search">
+        <input id="q" type="search" placeholder="Name oder ISO-Code, z. B. Island oder IS" autocomplete="off" spellcheck="false" aria-describedby="q-hint">
+        <span class="hint" id="q-hint"></span>
+      </div>
+      <div class="filters" id="filters" role="group" aria-label="Liste filtern"></div>
+      <ul id="list" class="list" aria-label="Liste nach Kontinent und Region"></ul>
+      <p id="empty" class="empty" hidden></p>
+    </aside>
+  </main>
+
+  <div class="savebar" id="savebar" hidden>
+    <span class="msg" id="save-msg"></span>
+    <div class="btns">
+      <button type="button" class="btn" id="btn-discard">Verwerfen</button>
+      <button type="button" class="btn primary" id="btn-save">Speichern</button>
+    </div>
+  </div>
+
+  <dialog id="dlg" aria-labelledby="dlg-h">
+    <div class="dlg">
+      <header>
+        <div>
+          <h2 id="dlg-h">Einstellungen</h2>
+          <p>Diese Angaben gelten nur für dieses Gerät und diesen Browser.</p>
+        </div>
+        <button type="button" class="btn" id="dlg-close">Schließen</button>
+      </header>
+
+      <section>
+        <h3>Dieses Gerät</h3>
+        <div class="field">
+          <label for="set-owner">Wem gehört dieses Gerät?</label>
+          <select id="set-owner"></select>
+          <span class="hint">Bearbeiten lässt sich nur die Karte dieser Person. Alle anderen Karten sind hier nur zum Ansehen.</span>
+        </div>
+        <div id="gh-fields">
+          <div class="field">
+            <label for="set-repo">GitHub-Repository</label>
+            <input id="set-repo" type="text" placeholder="benutzer/repo" autocomplete="off" spellcheck="false">
+            <span class="hint" id="repo-hint"></span>
+          </div>
+          <div class="field" style="margin-top:10px">
+            <label for="set-token">GitHub-Token</label>
+            <input id="set-token" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_…">
+            <div class="btnrow" style="margin-top:6px">
+              <button type="button" class="btn primary" id="token-save">Token prüfen und speichern</button>
+              <button type="button" class="btn danger" id="token-remove">Token entfernen</button>
+            </div>
+            <span class="msg" id="token-msg" role="status"></span>
+          </div>
+          <details class="help" style="margin-top:10px">
+            <summary>So erstellst du einen Token</summary>
+            <ol>
+              <li>Auf GitHub: <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Settings → Developer settings → Fine-grained tokens → Generate new token</a>.</li>
+              <li>Repository access: <code>Only select repositories</code>, das Länderatlas-Repo wählen.</li>
+              <li>Permissions → Repository permissions → <code>Contents</code>: <code>Read and write</code>.</li>
+              <li>Token erzeugen, kopieren und hier einfügen. Er bleibt nur in diesem Browser gespeichert.</li>
+            </ol>
+          </details>
+        </div>
+        <p id="demo-settings" hidden>Demo-Modus: Ein Token ist nicht nötig. „Speichern“ legt die Änderungen in diesem Browser ab.</p>
+      </section>
+
+      <section id="data-section">
+        <h3 id="data-h">Daten deiner Karte</h3>
+        <p>Text kopieren, um eine Sicherung anzulegen. Eingefügter Text ersetzt deine Markierungen; übernommen wird er erst mit „Speichern“. Exporte aus dem Prototyp 0.1 funktionieren ebenfalls.</p>
+        <textarea id="io" spellcheck="false" aria-label="Markierungen als JSON"></textarea>
+        <div class="btnrow">
+          <button type="button" class="btn" id="io-copy">Kopieren</button>
+          <button type="button" class="btn primary" id="io-apply">Eingefügten Text übernehmen</button>
+          <label class="file">oder Datei laden <input type="file" id="io-file" accept=".json,application/json,text/plain"></label>
+        </div>
+        <span class="msg" id="io-msg" role="status"></span>
+        <div class="btnrow" id="reset-row">
+          <button type="button" class="btn danger" id="reset">Alle Markierungen entfernen</button>
+        </div>
+        <div class="btnrow" id="reset-confirm" hidden>
+          <span class="msg" id="reset-q"></span>
+          <button type="button" class="btn danger" id="reset-yes">Ja, entfernen</button>
+          <button type="button" class="btn" id="reset-no">Abbrechen</button>
+        </div>
+      </section>
+    </div>
+  </dialog>
+</div>
