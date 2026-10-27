@@ -1,10 +1,48 @@
 {
   "profil": "johannes",
-  "aktualisiert": null,
-  "bereist": [],
+  "aktualisiert": "2026-10-27T12:24:38.708Z",
+  "bereist": [
+    "AL",
+    "AT",
+    "BA",
+    "BE",
+    "CH",
+    "CZ",
+    "DE",
+    "DK",
+    "ES",
+    "FI",
+    "FR",
+    "GB",
+    "HR",
+    "HU",
+    "IT",
+    "LI",
+    "LU",
+    "MC",
+    "MD",
+    "ME",
+    "MK",
+    "MT",
+    "NL",
+    "NO",
+    "PL",
+    "RO",
+    "RS",
+    "RU",
+    "SE",
+    "SI",
+    "SK",
+    "SM",
+    "US",
+    "VA",
+    "XK"
+  ],
   "geplant": [],
   "gebiete": {
-    "bereist": [],
+    "bereist": [
+      "GI"
+    ],
     "geplant": []
   }
 }
